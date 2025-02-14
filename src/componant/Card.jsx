@@ -84,9 +84,6 @@ function Card() {
             <TextField
               variant="standard"
               placeholder="0"
-            //   InputProps={{
-            //     disableUnderline: true, // Removes the bottom line
-            //   }}
               sx={{
                 
                 "& .MuiInputBase-root": {
