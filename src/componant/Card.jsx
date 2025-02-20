@@ -4,7 +4,9 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setFromCurrency, setToCurrency,setFromAmount,setToAmount } from "../features/currencySlice";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -17,12 +19,40 @@ const MenuProps = {
   },
 };
 
-function Card() {
+function Card({ title}) {
   const [currency, setCurrency] = useState("");
+  const [allCurrency, setAllCurrency] = useState({});
+  const { fromCurrency, toCurrency, fromAmount, toAmount } = useSelector((state) => state.currency);
+  const dispatch = useDispatch();
 
   const handleChange = (event) => {
-    setCurrency(event.target.value);
+    setFromAmount(event.target.value);
   };
+
+  useEffect(() => {
+    fetch(
+      "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json"
+    ) // API URL
+      .then((response) => response.json()) // Convert response to JSON
+      .then((json) => {
+        setAllCurrency(json);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
+  useEffect(() => {
+    fetch(
+      `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${fromCurrency}.json`
+    ) // API URL
+      .then((response) => response.json()) // Convert response to JSON
+      .then((json) => {
+        const amount = json[fromCurrency][toCurrency]*fromAmount;
+        dispatch(setToAmount(amount));
+        console.log("currency ", fromAmount);
+        console.log("toAmount: ",amount)
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, [fromCurrency,fromAmount,toCurrency]);
 
   return (
     <Box
@@ -30,7 +60,6 @@ function Card() {
         width: "100%",
         backgroundColor: "white",
         borderRadius: 3,
-        // margin:1
       }}
     >
       <Grid
@@ -59,7 +88,7 @@ function Card() {
                 color: "gray",
               }}
             >
-              From
+              {title=="fromCurrency"?"From":"To"}
             </Typography>
             <Typography
               variant="body1"
@@ -83,18 +112,18 @@ function Card() {
           >
             <TextField
               variant="standard"
-              placeholder="0"
+              value={title == "fromCurrency" ? fromAmount : toAmount}
+              onChange={title == "fromCurrency" ? (e)=>dispatch(setFromAmount(e.target.value)) : dispatch(setToAmount())}
               sx={{
-                
                 "& .MuiInputBase-root": {
-                    borderBottom: "none", // Remove bottom border
-                  },
-                  "& .MuiInput-underline:before, & .MuiInput-underline:after": {
-                    borderBottom: "none !important", // Remove underline (default & focus)
-                  },
-                  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-                    borderBottom: "none !important", // Remove hover underline
-                  },
+                  borderBottom: "none", // Remove bottom border
+                },
+                "& .MuiInput-underline:before, & .MuiInput-underline:after": {
+                  borderBottom: "none !important", // Remove underline (default & focus)
+                },
+                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                  borderBottom: "none !important", // Remove hover underline
+                },
               }}
             />
             <FormControl
@@ -107,13 +136,19 @@ function Card() {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={currency}
+                value={title == "fromCurrency" ? fromCurrency : toCurrency}
                 label="Currency"
-                onChange={handleChange}
+                onChange={(e) =>
+                  title == "fromCurrency"
+                    ? dispatch(setFromCurrency(e.target.value))
+                    : dispatch(setToCurrency(e.target.value))
+                }
               >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                {Object.entries(allCurrency).map(([key, value]) => (
+                  <MenuItem key={key} value={key}>
+                    {key}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Box>

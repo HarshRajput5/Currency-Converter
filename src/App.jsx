@@ -1,10 +1,13 @@
 import { Box, Button, Typography } from "@mui/material";
 import bgImage from "./assets/background.jpg";
 import "./App.css";
-// import Stack from "@mui/material/Stack";
 import Card from "./componant/Card";
+import { useSelector } from "react-redux";
 
 function App() {
+
+  const {fromCurrency,toCurrency} = useSelector((state) => state.currency);
+
   return (
     <>
       <Box
@@ -31,11 +34,12 @@ function App() {
             textAlign: "center",
           }}
         >
-          <Card />
-          <Card />
+          <Card title={"fromCurrency"}/>
+          <Card title={"toCurrency"}/>
           <Button
             variant="contained"
             fullWidth
+            onClick={submit}
             sx={{
               height: 70,
               borderRadius: 3,
@@ -43,7 +47,7 @@ function App() {
               fontSize: "20px", // Optional: Adjust font size
             }}
           >
-            Convert USD to INR
+            Convert {fromCurrency} to {toCurrency}
           </Button>
         </Box>
       </Box>
