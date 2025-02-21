@@ -3,10 +3,16 @@ import bgImage from "./assets/background.jpg";
 import "./App.css";
 import Card from "./componant/Card";
 import { useSelector } from "react-redux";
+import { useState } from "react";
 
 function App() {
 
   const {fromCurrency,toCurrency} = useSelector((state) => state.currency);
+  const [triggerEffect, setTriggerEffect] = useState(false);
+
+  const handleClick=()=>{
+    setTriggerEffect((prev)=>!prev);
+  }
 
   return (
     <>
@@ -34,12 +40,12 @@ function App() {
             textAlign: "center",
           }}
         >
-          <Card title={"fromCurrency"}/>
-          <Card title={"toCurrency"}/>
+          <Card title={"fromCurrency"} triggerEffect={triggerEffect}/>
+          <Card title={"toCurrency"} triggerEffect={triggerEffect}/>
           <Button
             variant="contained"
             fullWidth
-            onClick={submit}
+            onClick={handleClick}
             sx={{
               height: 70,
               borderRadius: 3,

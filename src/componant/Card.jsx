@@ -19,7 +19,7 @@ const MenuProps = {
   },
 };
 
-function Card({ title}) {
+function Card({ title, triggerEffect}) {
   const [currency, setCurrency] = useState("");
   const [allCurrency, setAllCurrency] = useState({});
   const { fromCurrency, toCurrency, fromAmount, toAmount } = useSelector((state) => state.currency);
@@ -52,7 +52,7 @@ function Card({ title}) {
         console.log("toAmount: ",amount)
       })
       .catch((error) => console.error("Error fetching data:", error));
-  }, [fromCurrency,fromAmount,toCurrency]);
+  }, [triggerEffect]);
 
   return (
     <Box
