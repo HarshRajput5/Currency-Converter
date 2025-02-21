@@ -34,8 +34,8 @@ function App() {
         <Box
           sx={{
             background: "rgba(247, 245, 245, 0.6)", // Semi-transparent overlay
-            padding: "20px",
-            width: "50%",
+            padding: {xs:"10px",md:"20px"},
+            width: {xs:"80%",md:"50%"},
             borderRadius: "8px",
             textAlign: "center",
           }}
